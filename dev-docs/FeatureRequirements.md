@@ -1,7 +1,5 @@
-Feature Requirements 
+Feature Requirements ( *in order of decreasing precendences* )
 ====================
-（*in order of decreasing precendences*）
---------------------
 ## Server
 1. *RS-01*  
 Any IoT devices(e。g. switcher, air conditioner, smart phone, etc.) be described in an unified form.
