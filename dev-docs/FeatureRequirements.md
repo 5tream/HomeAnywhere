@@ -17,7 +17,7 @@ Structured and streamed data be supported.
 Ability to host rtmp streams for publish subscription
 	* User client (e。g. browser, mobile phone, etc.) can subscribe to an specified rtmp stream for displaying.
 	* Every stream should be identified by an unique identifier.
-5. *RS-05"  
+5. *RS-05*
 RESTful api supported.
 	* Device, data are treated as *resource*
 	* Each device can be accessed via URI.
