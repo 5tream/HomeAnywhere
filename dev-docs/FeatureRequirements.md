@@ -23,7 +23,7 @@ RESTful api supported.
 	* Each device can be accessed via URI.
 
 ## Client
-1. *RC-01*  
+1. *RC-01*   
 Ability to connect to the server using HTTP connection
 	* Ability to perform device registering, data posting, command handling.
 	* Ability to stream video/audio and transfer video/audio stream using rtmp.
