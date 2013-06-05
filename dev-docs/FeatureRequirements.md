@@ -23,6 +23,7 @@ Ability to host rtmp streams for publish subscription
 RESTful api supported.
 	* Device, data are treated as *resource*
 	* Each device can be accessed via URI.
+
 ## Client
 1. *RC-01*  
 Ability to connect to the server using HTTP connection
