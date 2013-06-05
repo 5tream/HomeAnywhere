@@ -2,7 +2,7 @@ Feature Requirements ( *in order of decreasing precendences* )
 ====================
 ## Server
 1. *RS-01*  
-Any IoT devices(e。g. switcher, air conditioner, smart phone, etc.) be described in an unified form.
+Any IoT devices(e.g. switcher, air conditioner, smart phone, etc.) be described in an unified form.
 	* Some modeling works should be done in the very first.
 	* Database should be created for restoring devices' information
 2. *RS-02*  
