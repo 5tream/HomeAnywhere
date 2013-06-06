@@ -1,7 +1,7 @@
 /**
  * Author: Rye Yao
  * E-mail: rye.y.cn@gmail.com
- * Date: 2013/04/12
+ * Date: 2013/06/06
  */
 
 #ifndef IHTTPREQUESTHANDLER_H
@@ -9,19 +9,21 @@
 
 #include "http_request.h"
 #include "http_response.h"
-#include "i_http_method.h"
+#include "http_method.h"
 
 class IHttpRequestHandler {
     public:
-        IHttpRequestHandler(IHttpMethod method) { method_ = method; }
-        virtual ~IHttpRequestHandler() = 0;
-        virtual HttpResponse handle(HttpRequest request) = 0;
+
+        IHttpRequestHandler(HttpMethod method) { method_ = method; }
+        // request:in
+        // response:out
+        virtual int Handle(HttpRequest request, HttpResponse& response) {}
 
         // Getters and Setters
-        IHttpMethod method() { return method_; }
+        HttpMethod method() { return method_; }
 
     private:
-        IHttpMethod method_;
-}
+        HttpMethod method_;
+};
 
 #endif
