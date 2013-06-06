@@ -4,15 +4,8 @@
  * Date: 2013/06/05
  */
 
-#ifndef HTTPENUMS_H
-#define HTTPENUMS_H
-
-enum HttpMethod {
-    GET,
-    PUT,
-    POST,
-    DELETE
-}
+#ifndef HTTPSTATUS_H
+#define HTTPSTATUS_H
 
 enum HttpStatus {
    OK_200 = 200,
