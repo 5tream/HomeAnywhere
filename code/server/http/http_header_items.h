@@ -26,7 +26,9 @@
 #ifndef HTTPHEADERITEMS_H
 #define HTTPHEADERITEMS_H
 
-#define HH_KEEP_ALIVE "Keep-Alive"
+#define HH_HTTP_1_1 "HTTP/1.1"
+#define HH_HTTP_1_0 "HTTP/1.0"
+#define HH_CONNECTION "Connection"
 #define HH_CONTENT_LENGTH "Content-Length"
 #define HH_CONTENT_TYPE "Content-Type"
 #define HH_HOST "HOST"

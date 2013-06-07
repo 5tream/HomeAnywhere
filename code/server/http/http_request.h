@@ -31,6 +31,7 @@
 #include "http_header_items.h"
 
 #include <string.h>
+#include <iostream>
 
 class HttpRequest: public HttpMessage {
 
@@ -41,31 +42,32 @@ class HttpRequest: public HttpMessage {
         void set_path(string path) { path_ = path; }
         string path() { return path_; }
 
-        void set_keep_alive(bool keep_alive) { keep_alive_ = keep_alive; }
-        bool keep_alive() { return keep_alive_; }
 
         string ToString() {
             string res_str, ver_str;
             ver_str = version();
             res_str += GetStringFromMethod(method_) + string(" ") + path_ + string(" ") + ver_str + string("\r\n");
             map<string, string> h = headers();
-            for (map<string, string>::iterator it = headers().begin(); it != h.end(); it++) {
+            for (map<string, string>::iterator it = h.begin(); it != h.end(); it++) {
                 res_str += it->first + string(": ") + it->second + string("\r\n");
             }
 
-            if (keep_alive_) {
-                res_str += string(HH_KEEP_ALIVE) + string(": ") + string("true") + string("\r\n");
+            if (this->keep_alive()) {
+                //res_str += string(HH_CONNECTION) + string(": ") + string("keep-alive") + string("\r\n");
+            } else {
+                //res_str += string(HH_CONNECTION) + string(": ") + string("close") + string("\r\n");
+                
             }
             res_str += string("\r\n");
             string body(this->body());
             res_str += body;
+            return res_str;
         }
 
     private:
         HttpMethod method_;
         string path_;
         string version_;
-        bool keep_alive_;
 };
 
 #endif

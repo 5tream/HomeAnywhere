@@ -47,4 +47,15 @@ static string GetStringFromMethod(HttpMethod method) {
     }
 }
 
+static HttpMethod GetMethodFromString(string method) {
+    if (method == "GET") {
+        return GET;
+    } else if (method == "PUT") {
+        return PUT;
+    } else if (method == "POST") {
+        return POST;
+    } else if (method == "DELETE") {
+        return DELETE;
+    }
+}
 #endif

@@ -26,8 +26,12 @@
 #ifndef HTTPMESSAGE_H
 #define HTTPMESSAGE_H
 
+#include "http_header_items.h"
+
 #include <map>
 #include <string>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -42,11 +46,29 @@ class HttpMessage {
         void set_headers(map<string, string> headers) { headers_ = headers; }
         map<string, string> headers() { return headers_; }
 
-        void set_body(char* body) { body_ = body; }
-        char* body() { return body_; }
+        void set_body(string body) { 
+
+            body_ = body; 
+            stringstream ss;
+            ss<< body_.length();
+            headers_[HH_CONTENT_LENGTH] = ss.str(); 
+        }
+        string body() { return body_; }
+
+        int content_length() { return body_.length(); }
 
         void set_version(string version) { version_ = version; }
-        string version() { return version_; }
+        string version() {
+
+            if (version_ != "") {
+                return version_;
+            } else {
+                return HH_HTTP_1_1;
+            }
+        }
+
+        void set_keep_alive(bool keep_alive) { keep_alive_ = keep_alive; }
+        bool keep_alive() { return keep_alive_; }
 
         string ToString();
 
@@ -54,7 +76,8 @@ class HttpMessage {
 
         map<string, string> headers_;
         string version_;
-        char* body_;
+        string body_;
+        bool keep_alive_;
         
 };
 

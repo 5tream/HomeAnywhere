@@ -9,7 +9,7 @@ TARGETS = httpserver
 
 all: $(TARGETS)
 
-httpserver: main.cc http_server.h http_server.cc handler_get.cc third_libs/http_parser.c
+httpserver: main.cc http_server.h http_server.cc handler_get.cc third_libs/http_parser.c http_message_parser.cc
 	$(CPP) $(CFLAGS) $(INCS) $(LIBS) -o $@ $^
 
 
