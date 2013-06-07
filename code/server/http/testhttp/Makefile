@@ -12,4 +12,4 @@ testhttp: testhttp.cc
 	$(CPP) $(CFLAGS) $(INCS) -o $@ $^
 
 clean:
-	rm -f testhttp
+	rm -f *.o *.swp *~ $(TARGETS)

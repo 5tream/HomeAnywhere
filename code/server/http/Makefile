@@ -13,4 +13,4 @@ httpserver: main.cc http_server.h http_server.cc handler_get.cc utils/http_parse
 
 
 clean:
-	rm -f $(TARGETS)
+	rm -f *.o *.swp *~ $(TARGETS)
