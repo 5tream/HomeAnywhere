@@ -29,6 +29,7 @@
 #include "http_message.h"
 #include "http_status.h"
 #include <sstream>
+#include <string>
 #include "utils_log.h"
 
 using namespace std;
@@ -42,6 +43,7 @@ class HttpResponse: public HttpMessage {
         string ToString() {
             string res_str, ver_str;
             ver_str = version();
+
             stringstream ss;
             ss << status_;
 
@@ -50,6 +52,11 @@ class HttpResponse: public HttpMessage {
             map<string, string> h = headers();
             for (map<string, string>::iterator it = h.begin(); it != h.end(); it++) {
                 res_str += it->first + string(": ") + it->second + string("\r\n");
+            }
+            if (this->keep_alive()) {
+                res_str += string(HH_CONNECTION) + string(": ") + string("keep-alive") + string("\r\n");
+            } else {
+                res_str += string(HH_CONNECTION) + string(": ") + string("close") + string("\r\n");
             }
 
             res_str += string("\r\n");

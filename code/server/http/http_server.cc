@@ -25,7 +25,7 @@
 
 #include "http_server.h"
 #include "http_header_items.h"
-#include "http_parser.h"
+#include "http_message_parser.h"
 #include "utils_log.h"
 
 #include <stdio.h>
@@ -35,13 +35,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <assert.h>
+#include <iostream>
 
 #define HTTP_MESSAGE_MAX_LEN 80*1024
 #define BACKLOG 10
 
 void* HttpServer::client_thread_func (void* ptr_this) {
 
-    bool close_on_finished = true;
+    bool should_keep_alive = true;
 
     INFO("A client has connected.\n");
 
@@ -57,39 +58,42 @@ void* HttpServer::client_thread_func (void* ptr_this) {
 
         // Parse request
         DEBUG("Parse request\n");
-        if (http_server->Receive(request, client_sockfd) < 0 ) {
-            ERROR("Receive request error.\n");
-            close_on_finished = true;
-        }
+        int bytes_received = 0;
+        if ((bytes_received = http_server->Receive(request, client_sockfd)) > 0 ) {
 
-        // Handle request
-        DEBUG("Handle request\n");
-        IHttpRequestHandler* handler = http_server->handlers_list()[request.method()];
+            // Handle request
+            DEBUG("Handle request\n");
+            IHttpRequestHandler* handler = http_server->handlers_list()[request.method()];
 
-        DEBUG("request handler got for %s\n", GetStringFromMethod(handler->method()).c_str());
-        assert(handler != NULL);
+            DEBUG("request handler got for %s\n", GetStringFromMethod(handler->method()).c_str());
+            assert(handler != NULL);
 
-        if (handler->Handle(request, response) != 0) {
-            ERROR("handle request");
-            close_on_finished = true;
+            if (handler->Handle(request, response) < 0) {
+                ERROR("handle request error");
+                should_keep_alive = false;
+            }
+        } else {
+            if (bytes_received < 0) {
+                ERROR("Receive request error.\n");
+            }
+            should_keep_alive = false;
         }
 
         // Send response
         DEBUG("Send response\n");
         if (http_server->Answer(response, client_sockfd) < 0) {
-            ERROR("Answer request error.\n");
-            close_on_finished = true;
+            ERROR("Send response error.\n");
+            should_keep_alive = false;
         }
 
-        if (!strcmp(response.headers()[HH_KEEP_ALIVE].c_str(), "true")) {
-            close_on_finished = false;
-        }
+        should_keep_alive = response.keep_alive();
 
-        if (close_on_finished) {
+        if (!should_keep_alive) {
             break;
         }
     }
 
+    DEBUG("Close connection with client.\n");
     close(client_sockfd);
     pthread_exit(NULL);
 }
@@ -143,32 +147,49 @@ void HttpServer::Listen(int port)
     LoopAccepting(server_sockfd_);
 }
 
+int savebody(http_parser* parser, const char* at, size_t length) {
+
+    DEBUG("savebody called: %s\n", at);
+    ((HttpRequest *)parser->data)->set_body(at);
+    
+    return 0;
+}
+
+int saveheader(http_parser* parser, const char* at, size_t length) {
+
+    DEBUG("saveheader called: %s\t%d bytes\n", at, length);
+    return 0;
+}
+
 int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
 
     size_t num_parsed = 0;
     char buf[HTTP_MESSAGE_MAX_LEN];
     ssize_t bytes_received = 0;
 
-    if ((bytes_received = recv(client_sockfd, buf, HTTP_MESSAGE_MAX_LEN, 0)) < 0) {
-        ERROR("No byte to receive\n", bytes_received);
-        return -1;
+    if ((bytes_received = recv(client_sockfd, buf, HTTP_MESSAGE_MAX_LEN, 0)) <= 0) {
+        if (bytes_received < 0) {
+            ERROR("No byte to receive\n", bytes_received);
+            return -1;
+        } else {
+            ERROR("Connection has been forcibly closed by remote client.\n");
+            return 0;
+        }
     }
-    DEBUG("Received %d bytes\n%s\n", bytes_received, buf);
 
-    http_parser* parser = (http_parser*) malloc(sizeof(http_parser));
-    http_parser_init(parser, HTTP_REQUEST);
+    DEBUG("Received raw data %d bytes\n%s\n", bytes_received, buf);
 
+    HttpMessageParser parser(&request, true);
+    
 
-    http_parser_settings setting;
-    num_parsed = http_parser_execute(parser, &setting, buf, bytes_received);
-    DEBUG("Parser raw %s\n", http_method_str((enum http_method)parser->method));
-
-    if (num_parsed != bytes_received) {
+    if (parser.Parse(buf, bytes_received) < 0) {
         ERROR("Parse http request error.\n");
         return -1;
     }
 
-    return num_parsed;
+    DEBUG("Request Parsed %s\n", request.ToString().c_str());
+
+    return bytes_received;
 }
 
 int HttpServer::Answer(HttpResponse response, int client_sockfd) {
@@ -177,11 +198,22 @@ int HttpServer::Answer(HttpResponse response, int client_sockfd) {
     ssize_t bytes_sent = 0;
     size_t response_len = response.ToString().length();
 
-    if ((bytes_sent = send(client_sockfd, buf, response_len, 0)) < 0) {
-        ERROR("No data to send.\n");
+    if ((bytes_sent = send(client_sockfd, buf, response_len, 0)) <= 0) {
+        if (bytes_sent < 0) {
+            ERROR("Send data error.\n");
+            return -1;
+        } else {
+            ERROR("Connection has been forcibly closed by remote client.\n");
+            return 0;
+        }
+    }
+    
+    if (bytes_sent != response_len) {
+        ERROR("Send data error.\n");
         return -1;
     }
-    DEBUG("Answered %d bytes\n%s\n", bytes_sent, buf);
+
+    DEBUG("Sent response %d bytes\n%s\n", bytes_sent, buf);
 
     return 0;
 
