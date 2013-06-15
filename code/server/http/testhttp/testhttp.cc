@@ -22,7 +22,9 @@ int testMacro() {
     int i = 0;
     INFO("Test INFO %d", i);
     ERROR("Test ERROR");
-    FATAL("Test FATAL");
+    FATAL("__func__: %s\n", __func__);
+    FATAL("__FUNCTION__: %s\n", __FUNCTION__);
+    FATAL("__PRETTY_FUNCTION__: %s\n", __PRETTY_FUNCTION__);
     return 1;
 }
 

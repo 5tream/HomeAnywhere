@@ -147,20 +147,6 @@ void HttpServer::Listen(int port)
     LoopAccepting(server_sockfd_);
 }
 
-int savebody(http_parser* parser, const char* at, size_t length) {
-
-    DEBUG("savebody called: %s\n", at);
-    ((HttpRequest *)parser->data)->set_body(at);
-    
-    return 0;
-}
-
-int saveheader(http_parser* parser, const char* at, size_t length) {
-
-    DEBUG("saveheader called: %s\t%d bytes\n", at, length);
-    return 0;
-}
-
 int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
 
     size_t num_parsed = 0;
