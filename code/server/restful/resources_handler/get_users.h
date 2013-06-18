@@ -12,28 +12,24 @@
 * 
 */
 /**
-* @file resource.cc
-* @brief 
+* @file get_users.h
+* @brief Get all users
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-15
+* @date 2013-06-18
 */
 
-#include "resource.h"
+#ifndef GET_USERS_H
+#define GET_USERS_H
+
 #include "i_resource_handler.h"
-#include "utils_log.h"
 
-IResourceHandler* Resources::Find(string url, Params params) {
-    map<UrlTemplate*, Resource*>::iterator it = resources_.begin();
-    DEBUG("Begin to find\n");
-    for(; it != resources_.end(); it++) {
-        UrlTemplate* tmp = (*it).first;
-        if(tmp->Match(tmp->Split(url, '/'), params)) {
-            return (*it).second->resource_handler();
-        }
-    }
+class GetUsers: public IResourceHandler {
 
-    return NULL;
-}
+    public:
+        GetUsers(){}
+        Result Handle(Params args);
+};
 
+#endif
 

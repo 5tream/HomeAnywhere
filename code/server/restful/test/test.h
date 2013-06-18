@@ -12,28 +12,14 @@
 * 
 */
 /**
-* @file resource.cc
+* @file test.h
 * @brief 
 * @author Rye Yao
 * @version 0.1
 * @date 2013-06-15
 */
 
-#include "resource.h"
-#include "i_resource_handler.h"
-#include "utils_log.h"
-
-IResourceHandler* Resources::Find(string url, Params params) {
-    map<UrlTemplate*, Resource*>::iterator it = resources_.begin();
-    DEBUG("Begin to find\n");
-    for(; it != resources_.end(); it++) {
-        UrlTemplate* tmp = (*it).first;
-        if(tmp->Match(tmp->Split(url, '/'), params)) {
-            return (*it).second->resource_handler();
-        }
-    }
-
-    return NULL;
-}
-
-
+class Test {
+    public:
+        void TestMulti(...);
+};

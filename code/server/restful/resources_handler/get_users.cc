@@ -12,17 +12,28 @@
 * 
 */
 /**
-* @file user_handler.h
-* @brief 
+* @file get_users.cc
+* @brief get all users
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-15
+* @date 2013-06-18
 */
+#include "get_users.h"
 
-#ifndef USER_HANDLER_H
-#define USER_HANDLER_H
+Result GetUsers::Handle(Params args) {
+    Result result;
+    string res;
 
-#include "i_resource_handler.h"
+    DEBUG("Handling...\n");
+    if (args.Size() < 0) {
+        result.set_result("hello ");
+        return result;
+    }
+    for (int i = 0; i < args.Size(); i++) {
+        res += (string)args.Get(i);
+        res += "\n";
+    }
 
-const char* get_users(string, PARAMS); 
-#endif
+    result.set_result(res);
+    return result;
+}

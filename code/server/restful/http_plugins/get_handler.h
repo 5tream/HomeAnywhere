@@ -12,28 +12,28 @@
 * 
 */
 /**
-* @file resource.cc
-* @brief 
+* @file get_handler.h
+* @brief Implement IHttpRequestHandler to handle GET request
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-15
+* @date 2013-06-18
 */
 
+#ifndef GETHANDLER_H
+#define GETHANDLER_H
 #include "resource.h"
-#include "i_resource_handler.h"
-#include "utils_log.h"
 
-IResourceHandler* Resources::Find(string url, Params params) {
-    map<UrlTemplate*, Resource*>::iterator it = resources_.begin();
-    DEBUG("Begin to find\n");
-    for(; it != resources_.end(); it++) {
-        UrlTemplate* tmp = (*it).first;
-        if(tmp->Match(tmp->Split(url, '/'), params)) {
-            return (*it).second->resource_handler();
+class GetHandler: public IHttpRequestHandler {
+
+    public:
+        GetHandler(Resources resources, HttpMethod method):IHttpRequestHandler(method) {
+            resources_ = resources;
         }
-    }
+        int Handle(HttpRequest request, HttpResponse& response);
 
-    return NULL;
-}
+    private:
+        Resources resources_;
 
+};
 
+#endif

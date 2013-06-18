@@ -23,14 +23,26 @@
 //#include <string.h>
 //#include "utils_param_dumper.h"
 #include "user_handler.h"
+#include "test.h"
 #include <string>
+#include <iostream>
 using namespace std;
 
-#define DUMPPARAM(x) #x
-    
+void Test::TestMulti(string str) {
+
+    cout<<str<<endl;
+}
+
+void Test::TestMulti(int integer) {
+    cout<<integer<<endl;
+}
 int main() {
 
-    PARAMS params;
+    Params params;
     const char* result = get_users("PUT", params);
     printf("result is %s\n", result);
+
+    Test test;
+    //test.TestMulti("this is string");
+    test.TestMulti(5);
 }

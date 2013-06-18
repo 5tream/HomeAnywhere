@@ -22,12 +22,28 @@
 #ifndef URL_TEMPLATE_H
 #define URL_TEMPLAGE_H
 
+#include "i_resource_handler.h"
+
+#include <string>
+#include <vector>
+#include <sstream>
+using namespace std;
+
 class UrlTemplate {
     public:
         // e.g. /users/{id}/{name} is for applying the 4 http methods(get put post delete) to resource user with id {id} to operate its {name} attribute
         UrlTemplate(string url_str);
-        ~UrlTemplate();
-}
+        ~UrlTemplate(){}
+        bool Match(string url_str, Params params);
+        bool Match(vector<string> url_list, Params params);
+        vector<string> Split(const string &s, char delim);
 
+    private:
+        vector<string> &Split(const string &str, char delim, vector<string> &elems);
+
+    private:
+        string url_str_;
+        vector<string> url_list_;
+};
 
 #endif

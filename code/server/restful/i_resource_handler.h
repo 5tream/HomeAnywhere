@@ -24,9 +24,44 @@
 
 #include <map>
 #include <string>
+#include "utils_log.h"
+
 using namespace std;
 
-#define PARAMS map<string, string>
-typedef const char HDLR(string, PARAMS, ...);
+class Params {
+    public:
+        string Get(int index) {
+            return params_[index];
+        }
+
+        void Add(int index, string param) {
+            params_[index] = param;
+        }
+
+        int Size() {
+            return params_.size();
+        }
+
+    private:
+        map<int, string> params_;
+
+
+};
+
+class Result {
+    public:
+        void set_result(string result) { result_ = result; }
+        string result(){ return result_; }
+
+    private:
+        string result_;
+};
+
+class IResourceHandler {
+    public:
+        IResourceHandler(){}
+        //virtual ~IResourceHandler();
+        virtual Result Handle(Params args){}
+};
 
 #endif

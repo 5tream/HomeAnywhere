@@ -12,18 +12,21 @@
 * 
 */
 /**
-* @file user_handler.cc
-* @brief 
+* @file rest_server.cc
+* @brief A rest_server implemented with http_server
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-15
+* @date 2013-06-18
 */
 
-#include "user_handler.h"
-#include <stdio.h>
+#include "rest_server.h"
+#include "http_server.h"
+#include "get_handler.h"
 
-const char* get_users(string method, PARAMS params) {
+void RESTServer::Start() {
+   HttpServer http_server;
+   GetHandler get_handler(get_resources_, GET);
+   http_server.AddHandler(&get_handler);
 
-    printf("method is %s\n", method.c_str());
-    return string("hello").c_str();
+   http_server.Listen(port_);
 }

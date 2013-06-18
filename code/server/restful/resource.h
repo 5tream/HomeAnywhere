@@ -23,24 +23,50 @@
 #define RESOURCE_H
 
 #include "url_template.h"
+#include "i_resource_handler.h"
+#include "http_method.h"
+using namespace std;
+
 
 class Resource {
     public:
-        //Resource();
-        //~Resource();
-        void set_url_template(UrlTemplate url_template) { url_template_ = url_template; }
-        UrlTemplate url_template() { return url_template_; }
+        Resource(HttpMethod method, string url) {
+            http_method_ = method;
+            UrlTemplate ut(url);
+            url_template_ = &ut;
+        }
+
+        ~Resource() {}
+
+        void set_url_template(UrlTemplate* url_template) { url_template_ = url_template; }
+        UrlTemplate* url_template() { return url_template_; }
         
         void set_http_method(HttpMethod http_method) { http_method_ = http_method; }
+        HttpMethod http_method() { return http_method_; }
 
-        void set_resource_handler(IResourceHandler resource_handler) { resource_handler_ = resource_handler; }
-        void* resource_handler() { return resource_handler_; }
+        void set_resource_handler(IResourceHandler* resource_handler) { resource_handler_ = resource_handler; }
+        IResourceHandler* resource_handler() { return resource_handler_; }
 
     private:
-        UrlTemplate url_template_;
+        UrlTemplate* url_template_;
         HttpMethod http_method_;
-        IResourceHandler resource_handler_;
-}
+        IResourceHandler* resource_handler_;
+};
 
+class Resources {
+    public:
+        Resources(){}
+        ~Resources(){}
+
+        void AddResource(Resource* resource) {
+            UrlTemplate* ut = resource->url_template();
+            resources_[ut] = resource;
+        }
+
+        IResourceHandler* Find(string url, Params params);
+
+    private:
+        map<UrlTemplate*, Resource*> resources_;
+};
 #endif
 
