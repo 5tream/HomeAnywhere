@@ -13,14 +13,14 @@
 
 VideoContainer *video_container_new(int buf_capacity)
 {
-    VideoContainer *thiz = malloc(sizeof(VideoContainer));
+    VideoContainer *thiz = (VideoContainer *)malloc(sizeof(VideoContainer));
     
     if (thiz != NULL)
     {
         thiz->buf_capacity = buf_capacity; 
 
         thiz->processed_size = 0;
-        thiz->processed_buffer = malloc(buf_capacity);
+        thiz->processed_buffer = (unsigned char *)malloc(buf_capacity);
         if (thiz->processed_buffer == NULL)
         {
             return NULL;
@@ -45,7 +45,7 @@ void video_container_updatedb(VideoContainer *thiz,
     pthread_mutex_lock(&thiz->db);
 
     thiz->processed_size = frame_process(thiz->processed_buffer, 
-                                         in_buffer,
+                                         (unsigned char *)in_buffer,
                                          in_size,
                                          in_format,
                                          out_format);

@@ -76,7 +76,7 @@ void *video_stream_thread(void *user_data)
         {
             continue;
         }
-        in_buffer = malloc(in_size);
+        in_buffer = (unsigned char *)malloc(in_size);
 
         pos = 0;
         left_size = in_size;

@@ -51,14 +51,14 @@ static int video_server_find_avail_index(VideoServer *thiz)
 VideoServer *video_server_new(int port, int stream_count)
 {
     int i;
-    VideoServer *thiz = malloc(sizeof(VideoServer));
+    VideoServer *thiz = (VideoServer *)malloc(sizeof(VideoServer));
 
     if (thiz != NULL)
     {
         thiz->port = port;
         thiz->stream_count = stream_count;
         thiz->stream_cur_max = 0;
-        thiz->stream_list = malloc(sizeof(Stream *) * stream_count);
+        thiz->stream_list = (Stream **)malloc(sizeof(Stream *) * stream_count);
         if (thiz->stream_list == NULL)
         {
             return NULL;
@@ -173,7 +173,7 @@ void video_server_run(VideoServer *thiz)
                 thiz->stream_cur_max = index;
             }
 
-            thiz->stream_list[index] = malloc(sizeof(Stream));
+            thiz->stream_list[index] = (Stream *)malloc(sizeof(Stream));
             thiz->stream_list[index]->id = index;
             thiz->stream_list[index]->ctx = NULL;
             thiz->stream_list[index]->socket = connect_socket;
