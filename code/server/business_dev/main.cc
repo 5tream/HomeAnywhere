@@ -26,7 +26,8 @@
 #include "utils_log.h"
 #include "http_server.h"
 #include "http_method.h"
-#include "get_users.h"
+#include "put_command.h"
+#include "get_command.h"
 #include "rest_server.h"
 
 int main(int argc, char** argv) {
@@ -40,17 +41,23 @@ int main(int argc, char** argv) {
         exit(0);
     }
 
+    Queue<Devices> device_queue;
+
     // Create resources
-    Resource *devices_resource = new Resource(GET, "/users/{0}/devices/{1}");
-    Resource *users_resource = new Resource(GET, "/users/{0}");
+    Resource *put_command_res = new Resource(PUT, "/users/{0}/devices/{1}/command/{2}");
+    Resource *get_command_res = new Resource(GET, "/users/{0}/devices/{1}/command");
     
     // Set resource handler
-    GetUsers *gu = new GetUsers();
-    users_resource->set_resource_handler(gu);
+    PutCommand *pc = new PutCommand(&device_queue);
+    put_command_res->set_resource_handler(pc);
+
+    GetCommand *gc = new GetCommand(&device_queue);
+    get_command_res->set_resource_handler(gc);
 
     // Add resource to REST server
     RESTServer rest_server(port);
-    rest_server.AddResource(users_resource);
+    rest_server.AddResource(put_command_res);
+    rest_server.AddResource(get_command_res);
 
     // Start REST server
     rest_server.Start();

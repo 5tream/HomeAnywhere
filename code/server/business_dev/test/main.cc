@@ -13,46 +13,32 @@
 */
 /**
 * @file main.cc
-* @brief A demo to set up a rest server
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-20
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "i_resource_handler.h"
-#include "resource.h"
+#include "entities.h"
 #include "utils_log.h"
 #include "http_server.h"
-#include "http_method.h"
-#include "get_users.h"
-#include "rest_server.h"
+#include "handler_get.h"
+#include "http_get_command.h"
 
 int main(int argc, char** argv) {
-
+    
     int port = 80;
 
     if (argc == 2) {
         port = atoi(argv[1]);
     } else if (argc > 2) {
-        ERROR("usage: restserver [port]\n\t port: 80 by default.");
+        ERROR("usage: business [port]\n\t port: 80 by default.");
         exit(0);
     }
 
-    // Create resources
-    Resource *devices_resource = new Resource(GET, "/users/{0}/devices/{1}");
-    Resource *users_resource = new Resource(GET, "/users/{0}");
-    
-    // Set resource handler
-    GetUsers *gu = new GetUsers();
-    users_resource->set_resource_handler(gu);
-
-    // Add resource to REST server
-    RESTServer rest_server(port);
-    rest_server.AddResource(users_resource);
-
-    // Start REST server
-    rest_server.Start();
+    HttpServer hs;
+    HttpGetCommand get_command(GET);
+    hs.AddHandler(&get_command);
+    hs.Listen(port);
 
 }

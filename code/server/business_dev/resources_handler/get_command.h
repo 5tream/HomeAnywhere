@@ -12,26 +12,28 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file get_command.h
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-20
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
+#ifndef GET_COMMAND_H
+#define GET_COMMAND_H
 
-void RESTServer::Start() {
-   HttpServer http_server;
+#include "i_resource_handler.h"
+#include "Queue.h"
+#include "entities.h"
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
+class GetCommand: public IResourceHandler {
+    public:
+        GetCommand(Queue<Devices>* device_queue) {
+            device_queue_ = device_queue;
+        }
+        Result Handle(Params* args);
+    private:
+        Queue<Devices>* device_queue_;
+};
 
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
-
-   http_server.Listen(port_);
-}
+#endif

@@ -33,7 +33,8 @@ extern "C" {
 #include <stdio.h>
 
 #ifdef __DEBUG
-#define DEBUG(format,...) printf("\n\033[1;32m["__DATE__"]["__TIME__"][DEBUG ==> "__FILE__":%d | ", __LINE__); \
+//#define DEBUG(format,...) printf("\n\033[1;32m["__DATE__"]["__TIME__"][DEBUG ==> "__FILE__":%d | ", __LINE__);
+#define DEBUG(format,...) printf("\n\033[1;32m[DEBUG ==> "); \
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
@@ -41,7 +42,8 @@ extern "C" {
 #endif //__DEBUG
 
 #ifdef __INFO
-#define INFO(format,...) printf("\n\033[1;34m["__DATE__"]["__TIME__"][INFO  ==> "__FILE__":%d | ", __LINE__); \
+//#define INFO(format,...) printf("\n\033[1;34m["__DATE__"]["__TIME__"][INFO  ==> "__FILE__":%d | ", __LINE__);
+#define INFO(format,...) printf("\n\033[1;34m[INFO  ==> "); \
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
@@ -49,7 +51,8 @@ extern "C" {
 #endif //__INFO
 
 #ifdef __ERROR
-#define ERROR(format,...) printf("\n\033[1;31m["__DATE__"]["__TIME__"][ERROR ==> "__FILE__":%d | ", __LINE__); \
+//#define ERROR(format,...) printf("\n\033[1;31m["__DATE__"]["__TIME__"][ERROR ==> "__FILE__":%d | ", __LINE__);
+#define ERROR(format,...) printf("\n\033[1;31m[ERROR ==> "); \
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
@@ -57,7 +60,8 @@ extern "C" {
 #endif //__ERROR
 
 #ifdef __FATAL
-#define FATAL(format,...) fprintf(stderr, "\n\033[41;1;32m["__DATE__"]["__TIME__"][FATAL ==> "__FILE__":%d | ", __LINE__); \
+//#define FATAL(format,...) fprintf(stderr, "\n\033[41;1;32m["__DATE__"]["__TIME__"][FATAL ==> "__FILE__":%d | ", __LINE__);
+#define FATAL(format,...) fprintf(stderr, "\n\033[41;1;32m[FATAL ==> "); \
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf("%s\n", strerror(errno)); \
     printf(format"\033[0m\n", ##__VA_ARGS__)

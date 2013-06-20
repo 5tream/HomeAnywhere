@@ -12,26 +12,18 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file main.h
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-20
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
+#ifndef MAIN_H
+#define MAIN_H
 
-void RESTServer::Start() {
-   HttpServer http_server;
+#include "Queue.h"
+#include "entities.h"
+//extern Queue<Devices> device_queue;
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
-
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
-
-   http_server.Listen(port_);
-}
+#endif

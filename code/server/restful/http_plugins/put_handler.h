@@ -12,26 +12,27 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file put_handler.h
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-20
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
+#ifndef PUTHANDLER_H
+#define PUTHANDLER_H
+#include "resource.h"
 
-void RESTServer::Start() {
-   HttpServer http_server;
+class PutHandler: public IHttpRequestHandler {
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
+    public:
+        PutHandler(Resources resources, HttpMethod method): IHttpRequestHandler(method) {
+            resources_ = resources;
+        }
+        int Handle(HttpRequest request, HttpResponse& response);
 
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
+    private:
+        Resources resources_;
+};
 
-   http_server.Listen(port_);
-}
+#endif

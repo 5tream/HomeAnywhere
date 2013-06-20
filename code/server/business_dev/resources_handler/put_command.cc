@@ -12,26 +12,31 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file put_command.cc
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-20
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
+#include "put_command.h"
 
-void RESTServer::Start() {
-   HttpServer http_server;
+Result PutCommand::Handle(Params* args) {
+    Result result;
+    string res = "";
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
+    //TODO put command to queue
+    // Create an command
+    Command* comm = new Command();
 
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
+    comm->to_did = args->Get(1);
+    comm->command_str = args->Get(2);
 
-   http_server.Listen(port_);
+    Devices all_devs;
+    // Get device queue
+    device_queue_->pop(all_devs);
+    // add command
+    all_devs[comm->to_did]->command_queue.push(comm);
+    // Save device queue
+    device_queue_->push(all_devs);
 }
