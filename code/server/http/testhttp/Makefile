@@ -2,7 +2,7 @@ CC = gcc
 CPP = g++
 
 CFLAGS = -pthread -g -D__DEBUG -D__INFO -D__ERROR -D__FATAL
-INCS = -I../ -I../../
+INCS = -I../ -I../../common/ -I../../common/utils/
 
 TARGETS = testhttp
 

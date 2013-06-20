@@ -147,20 +147,6 @@ void HttpServer::Listen(int port)
     LoopAccepting(server_sockfd_);
 }
 
-int savebody(http_parser* parser, const char* at, size_t length) {
-
-    DEBUG("savebody called: %s\n", at);
-    ((HttpRequest *)parser->data)->set_body(at);
-    
-    return 0;
-}
-
-int saveheader(http_parser* parser, const char* at, size_t length) {
-
-    DEBUG("saveheader called: %s\t%d bytes\n", at, length);
-    return 0;
-}
-
 int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
 
     size_t num_parsed = 0;
@@ -194,10 +180,10 @@ int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
 
 int HttpServer::Answer(HttpResponse response, int client_sockfd) {
 
-    const char* buf = response.ToString().c_str();
     ssize_t bytes_sent = 0;
     size_t response_len = response.ToString().length();
-
+    char* buf = new char[response_len];
+    memcpy(buf, response.ToString().c_str(), response_len);
     if ((bytes_sent = send(client_sockfd, buf, response_len, 0)) <= 0) {
         if (bytes_sent < 0) {
             ERROR("Send data error.\n");
