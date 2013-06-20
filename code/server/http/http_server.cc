@@ -37,7 +37,6 @@
 #include <assert.h>
 #include <iostream>
 
-#define HTTP_MESSAGE_MAX_LEN 80*1024
 #define BACKLOG 10
 
 void* HttpServer::client_thread_func (void* ptr_this) {
