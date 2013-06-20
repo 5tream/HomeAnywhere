@@ -16,22 +16,46 @@
  * 
  */
 /**
- * @file http_header_items.h
+ * @file http_method.h
  * @brief 
  * @author Rye Yao
  * @version 0.1
  * @date 2013-06-07
  */
 
-#ifndef HTTPHEADERITEMS_H
-#define HTTPHEADERITEMS_H
+#ifndef HTTPMETHOD_H
+#define HTTPMETHOD_H
 
-#define HH_HTTP_1_1 "HTTP/1.1"
-#define HH_HTTP_1_0 "HTTP/1.0"
-#define HH_CONNECTION "Connection"
-#define HH_CONTENT_LENGTH "Content-Length"
-#define HH_CONTENT_TYPE "Content-Type"
-#define HH_HOST "HOST"
-#define HH_USER_AGENT "User-Agent"
+typedef enum HttpMethod
+{
+    GET,
+    PUT,
+    POST,
+    DELETE
+}HttpMethod;
 
+static string GetStringFromMethod(HttpMethod method) {
+    switch(method) {
+        case GET:
+            return "GET";
+        case PUT:
+            return "PUT";
+        case POST:
+            return "POST";
+        case DELETE:
+            return "DELETE";
+    }
+}
+
+static HttpMethod GetMethodFromString(string method) {
+    if (method == "GET") {
+        return GET;
+    } else if (method == "PUT") {
+        return PUT;
+    } else if (method == "POST") {
+        return POST;
+    } else if (method == "DELETE") {
+        return DELETE;
+    }
+}
 #endif

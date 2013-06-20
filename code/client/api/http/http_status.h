@@ -16,22 +16,38 @@
  * 
  */
 /**
- * @file http_header_items.h
+ * @file http_status.h
  * @brief 
  * @author Rye Yao
  * @version 0.1
  * @date 2013-06-07
  */
 
-#ifndef HTTPHEADERITEMS_H
-#define HTTPHEADERITEMS_H
+#ifndef HTTPSTATUS_H
+#define HTTPSTATUS_H
 
-#define HH_HTTP_1_1 "HTTP/1.1"
-#define HH_HTTP_1_0 "HTTP/1.0"
-#define HH_CONNECTION "Connection"
-#define HH_CONTENT_LENGTH "Content-Length"
-#define HH_CONTENT_TYPE "Content-Type"
-#define HH_HOST "HOST"
-#define HH_USER_AGENT "User-Agent"
+enum HttpStatus {
+   OK_200 = 200,
+
+   FORBIDDEN_403 = 403,
+   NOT_FOUND_404 = 404,
+   INTERNAL_SERVER_ERROR_500 = 500
+   // TODO add the rests
+};
+
+static string GetStringFromStatus(HttpStatus status) {
+    switch(status) {
+        case 200:
+            return "OK";
+        case 403:
+            return "Forbidden";
+        case 404:
+            return "Not Found";
+        case 500:
+            return "Internal Server Error";
+        default:
+            return "OK";
+    }
+}
 
 #endif
