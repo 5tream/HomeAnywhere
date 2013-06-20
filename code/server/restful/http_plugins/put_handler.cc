@@ -28,6 +28,7 @@ int PutHandler::Handle(HttpRequest request, HttpResponse& response) {
     string url = request.path();
     Params* params = new Params();
 
+    DEBUG("Fuck it!\n");
     IResourceHandler* handler;
 
     if((handler = resources_.Find(url, params)) == NULL) {
@@ -35,11 +36,13 @@ int PutHandler::Handle(HttpRequest request, HttpResponse& response) {
         response.set_status(NOT_FOUND_404);
         return -1;
     }
+    DEBUG("Fuck it2!\n");
 
     Result res = handler->Handle(params);
     response.set_body(res.result());
     response.set_status(OK_200);
 
+    DEBUG("Fuck it3!\n");
     return 0;
 }
 

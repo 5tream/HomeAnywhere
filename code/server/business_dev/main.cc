@@ -42,6 +42,8 @@ int main(int argc, char** argv) {
     }
 
     Queue<Devices> device_queue;
+    Devices devices;
+    device_queue.push(devices);
 
     // Create resources
     Resource *put_command_res = new Resource(PUT, "/users/{0}/devices/{1}/command/{2}");

@@ -20,6 +20,7 @@
 */
 
 #include "get_command.h"
+#include "utils_log.h"
 
 Result GetCommand::Handle(Params* args) {
     Result result;
@@ -31,12 +32,16 @@ Result GetCommand::Handle(Params* args) {
     // Prepare an command structure
     Command *comm;
 
+    DEBUG("11111\n");
     Devices all_devs;
     // Get device queue
+    DEBUG("22222\n");
     device_queue_->pop(all_devs);
     // Retrive and Pop command
     comm = all_devs[curr_did]->command_queue.front();
+    DEBUG("55555\n");
     all_devs[curr_did]->command_queue.pop();
+    DEBUG("44444\n");
 
     // Save device queue
     device_queue_->push(all_devs);

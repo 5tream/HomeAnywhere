@@ -108,11 +108,15 @@ HttpMessageParser::~HttpMessageParser() {
 }
 
 int HttpMessageParser::Parse(char* buf, size_t len) {
-    http_parser_init(parser_, HTTP_REQUEST);
+    if (is_request_) {
+        http_parser_init(parser_, HTTP_REQUEST);
+    } else {
+        http_parser_init(parser_, HTTP_RESPONSE);
+    }
     int num_parsed = http_parser_execute(parser_, &settings_, buf, len);
 
     if (num_parsed != len) {
-        ERROR("Parse HttpRequest error!\n");
+        ERROR("Parse HttpMessage error!\n");
         return -1;
     }
 

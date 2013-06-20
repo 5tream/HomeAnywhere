@@ -36,11 +36,11 @@ int GetHandler::Handle(HttpRequest request, HttpResponse& response) {
         return -1;
     }
 
-    //DEBUG("Resource found!, params size %d\n", params->Size());
+    DEBUG("Resource found!, params size %d\n", params->Size());
     Result res = handler->Handle(params);
     response.set_body(res.result());
     response.set_status(OK_200);
-    //DEBUG("Response is %s\n", response.ToString().c_str());
+    DEBUG("Response is %s\n", response.ToString().c_str());
 
     return 0;
 }

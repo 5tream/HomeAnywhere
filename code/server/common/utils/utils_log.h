@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#include <errno.h>
 
 #ifdef __DEBUG
 //#define DEBUG(format,...) printf("\n\033[1;32m["__DATE__"]["__TIME__"][DEBUG ==> "__FILE__":%d | ", __LINE__);
