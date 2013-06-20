@@ -23,12 +23,11 @@
 #include "i_resource_handler.h"
 #include "utils_log.h"
 
-IResourceHandler* Resources::Find(string url, Params params) {
+IResourceHandler* Resources::Find(string url, Params* params) {
     map<UrlTemplate*, Resource*>::iterator it = resources_.begin();
-    DEBUG("Begin to find\n");
     for(; it != resources_.end(); it++) {
         UrlTemplate* tmp = (*it).first;
-        if(tmp->Match(tmp->Split(url, '/'), params)) {
+        if(tmp->Match(url, params)) {
             return (*it).second->resource_handler();
         }
     }

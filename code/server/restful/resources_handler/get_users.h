@@ -28,7 +28,7 @@ class GetUsers: public IResourceHandler {
 
     public:
         GetUsers(){}
-        Result Handle(Params args);
+        Result Handle(Params* args);
 };
 
 #endif

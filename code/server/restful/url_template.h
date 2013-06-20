@@ -34,8 +34,8 @@ class UrlTemplate {
         // e.g. /users/{id}/{name} is for applying the 4 http methods(get put post delete) to resource user with id {id} to operate its {name} attribute
         UrlTemplate(string url_str);
         ~UrlTemplate(){}
-        bool Match(string url_str, Params params);
-        bool Match(vector<string> url_list, Params params);
+        bool Match(string url_str, Params* params);
+        bool Match(vector<string> url_list, Params* params);
         vector<string> Split(const string &s, char delim);
 
     private:

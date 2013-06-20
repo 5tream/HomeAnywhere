@@ -26,19 +26,21 @@
 
 int GetHandler::Handle(HttpRequest request, HttpResponse& response) {
     string url = request.path();
-    Params params;
+    Params* params = new Params();
 
     IResourceHandler* handler;
+
     if ((handler = resources_.Find(url, params)) == NULL) {
         DEBUG("Resource not found\n");
         response.set_status(NOT_FOUND_404);
         return -1;
     }
-    DEBUG("Resource found!\n");
+
+    //DEBUG("Resource found!, params size %d\n", params->Size());
     Result res = handler->Handle(params);
-    response.set_body("hello");
+    response.set_body(res.result());
     response.set_status(OK_200);
-    DEBUG("Response is %s\n", response.ToString().c_str());
+    //DEBUG("Response is %s\n", response.ToString().c_str());
 
     return 0;
 }

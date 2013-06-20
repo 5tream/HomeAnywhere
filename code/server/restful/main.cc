@@ -41,15 +41,15 @@ int main(int argc, char** argv) {
     }
 
     // Create a resource
-    Resource users_resource(GET, "/users");
+    Resource *users_resource = new Resource(GET, "/users/{0}/devices/{1}");
     
     // Set resource handler
-    GetUsers gu;
-    users_resource.set_resource_handler(&gu);
+    GetUsers *gu = new GetUsers();
+    users_resource->set_resource_handler(gu);
 
     // Add resource to REST server
     RESTServer rest_server(port);
-    rest_server.AddResource(&users_resource);
+    rest_server.AddResource(users_resource);
 
     // Start REST server
     rest_server.Start();

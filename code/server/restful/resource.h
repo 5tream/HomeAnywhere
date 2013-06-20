@@ -32,8 +32,8 @@ class Resource {
     public:
         Resource(HttpMethod method, string url) {
             http_method_ = method;
-            UrlTemplate ut(url);
-            url_template_ = &ut;
+            UrlTemplate* ut = new UrlTemplate(url);
+            url_template_ = ut;
         }
 
         ~Resource() {}
@@ -63,7 +63,7 @@ class Resources {
             resources_[ut] = resource;
         }
 
-        IResourceHandler* Find(string url, Params params);
+        IResourceHandler* Find(string url, Params* params);
 
     private:
         map<UrlTemplate*, Resource*> resources_;

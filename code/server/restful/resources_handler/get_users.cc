@@ -20,20 +20,23 @@
 */
 #include "get_users.h"
 
-Result GetUsers::Handle(Params args) {
+Result GetUsers::Handle(Params* args) {
     Result result;
-    string res;
+    string res = "";
 
-    DEBUG("Handling...\n");
-    if (args.Size() < 0) {
+    DEBUG("Handling... args size %d\n", args->Size());
+    if (args->Size() < 0) {
         result.set_result("hello ");
         return result;
     }
-    for (int i = 0; i < args.Size(); i++) {
-        res += (string)args.Get(i);
+
+    for (int i = 0; i < args->Size(); i++) {
+        DEBUG("args %d is %s\n", i, args->Get(i).c_str());
+        res += args->Get(i);
         res += "\n";
     }
 
     result.set_result(res);
+
     return result;
 }

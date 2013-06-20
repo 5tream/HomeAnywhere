@@ -61,7 +61,7 @@ class IResourceHandler {
     public:
         IResourceHandler(){}
         //virtual ~IResourceHandler();
-        virtual Result Handle(Params args){}
+        virtual Result Handle(Params* args){}
 };
 
 #endif
