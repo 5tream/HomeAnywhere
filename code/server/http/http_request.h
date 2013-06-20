@@ -56,9 +56,11 @@ class HttpRequest: public HttpMessage {
                 //res_str += string(HH_CONNECTION) + string(": ") + string("keep-alive") + string("\r\n");
             } else {
                 //res_str += string(HH_CONNECTION) + string(": ") + string("close") + string("\r\n");
-                
             }
             res_str += string("\r\n");
+            if (this->content_length() == 0) {
+                return res_str;
+            }
             string body(this->body());
             res_str += body;
             return res_str;

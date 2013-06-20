@@ -54,12 +54,15 @@ class HttpResponse: public HttpMessage {
                 res_str += it->first + string(": ") + it->second + string("\r\n");
             }
             if (this->keep_alive()) {
-                res_str += string(HH_CONNECTION) + string(": ") + string("keep-alive") + string("\r\n");
+                //res_str += string(HH_CONNECTION) + string(": ") + string("keep-alive") + string("\r\n");
             } else {
                 res_str += string(HH_CONNECTION) + string(": ") + string("close") + string("\r\n");
             }
 
             res_str += string("\r\n");
+            if (this->content_length() == 0) {
+                return res_str;
+            }
             res_str += string(this->body());
             return res_str;
         }

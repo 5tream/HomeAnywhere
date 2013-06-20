@@ -32,5 +32,6 @@
 #define HH_CONTENT_LENGTH "Content-Length"
 #define HH_CONTENT_TYPE "Content-Type"
 #define HH_HOST "HOST"
+#define HH_USER_AGENT "User-Agent"
 
 #endif

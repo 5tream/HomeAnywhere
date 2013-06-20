@@ -49,10 +49,14 @@ class HttpMessage {
 
         void set_body(string body) { 
 
-            body_ = body; 
-            stringstream ss;
-            ss<< body_.length();
-            headers_[HH_CONTENT_LENGTH] = ss.str(); 
+            if (body == "" || body.length() == 0) {
+                body_ = "";
+            } else {
+                body_ = body; 
+                stringstream ss;
+                ss<< body_.length();
+                headers_[HH_CONTENT_LENGTH] = ss.str(); 
+            }
         }
         string body() { return body_; }
 
