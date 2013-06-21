@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -11,6 +12,7 @@
 
 #include "command.h"
 #include "capture.h"
+#include "serial.h"
 #include "video_container.h"
 #include "jpeg_encoder.h"
 #include "device_api.h"
@@ -23,6 +25,11 @@
 #define CAM_HEIGHT      240
 #define CAM_FPS         5
 #define JPEG_QUALITY    80
+
+#define BAUD_RATE       9600
+#define DATA_BITS       8
+#define STOP_BITS       1
+#define PARITY_TYPE     'N'
 
 #define BACKLOG         5
 #define BUF_SIZE        1024
@@ -97,8 +104,21 @@ static void frame_callback(void *ctx, void *buf_start, int buf_size)
 
 static void send_thread_cleanup(void *arg)
 {
+    int socket_fd = (int)arg;
     printf("enter send thread cleanup\n");
     video_container_releasedb(&container);
+    close(socket_fd);
+}
+
+static void signal_handler(int signum)
+{
+    printf("enter cleanup\n");
+
+    pthread_cancel(camera_tid);
+    camera_close(&camera);
+    video_container_destroy(&container);
+
+    exit(0);
 }
 
 /************************************************************
@@ -111,14 +131,12 @@ static void *send_thread(void *user_data)
 
     printf("enter into send thread\n");
 
-    pthread_cleanup_push(send_thread_cleanup, NULL);
+    pthread_cleanup_push(send_thread_cleanup, user_data);
     pthread_detach(pthread_self());
 
     for (;;)
     {
         video_container_requestdb(&container, requestdb_callback, NULL);
-
-        printf("send frame, ctx:%d, size:%d\n", data_type, send_frame_size);
 
         send(client_socket, (void *)&data_type, sizeof(int), 0);
         send(client_socket, (void *)&send_frame_size, sizeof(int), 0);
@@ -155,12 +173,14 @@ int main(int argc, char **argv)
     int recv_size;
     char command_buf[BUF_SIZE];
 
+    int serial_fd;
+
     int socket_fd;
     struct sockaddr_in serv_addr;
 
-    if (argc != 7)
+    if (argc != 8)
     {
-        fprintf(stderr, "Usage: %s addr video_port http_port camera_name camera_format output_format\n", argv[0]);
+        fprintf(stderr, "Usage: %s addr video_port http_port camera_name camera_format output_format serial_name\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -193,6 +213,18 @@ int main(int argc, char **argv)
         fprintf(stderr, "unsupported output format, support \"raw\" and \"jpeg\"\n");
         exit(EXIT_FAILURE);
     }
+
+    signal(SIGINT, signal_handler);
+
+    /* serial device init */
+    if ((serial_fd = serial_open_device(argv[7])) == -1)
+    {
+        perror("open serial failed");
+        exit(EXIT_FAILURE);
+    }
+    serial_set_raw_mode(serial_fd);
+    serial_set_speed(serial_fd, BAUD_RATE);
+    serial_set_parity(serial_fd, DATA_BITS, PARITY_TYPE, STOP_BITS);
 
     /* video container init */
     video_container_init(&container,  CAM_WIDTH * CAM_HEIGHT * 2);
@@ -231,41 +263,10 @@ int main(int argc, char **argv)
     device.owner_id = "1";
 
     dev_api.Init(device);
-    MyCallback mycallback;
+    MyCallback mycallback(serial_fd);
     dev_api.RegisterCallback(&mycallback);
 
-    /* command parsing module */
-    for (;;)
-    {
-        //if ((recv_size = recv(socket_fd, command_buf, BUF_SIZE, 0)) <= 0)
-        //{
-        //    if (recv_size == 0)
-        //    {
-        //        printf("client exit\n");
-
-        //        pthread_cancel(send_tid);
-
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        perror("recv failed");
-        //        exit(EXIT_FAILURE);
-        //    }
-        //}
-        //command_buf[recv_size] = '\0';
-
-        //printf("command(length = %d): %s\n", recv_size, command_buf);
-
-        //extract_command(command_buf, command_callback, NULL); 
-    }
-
-    pthread_cancel(camera_tid);
-
-    camera_close(&camera);
-    video_container_destroy(&container);
-
-    close(socket_fd);
+    pause();
 
     return 0;
 }

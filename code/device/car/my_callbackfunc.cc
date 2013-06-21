@@ -20,20 +20,24 @@
 */
 
 #include <unistd.h>
+#include <string.h>
+
 #include "my_callbackfunc.h"
 #include "command.h"
 
 static void command_callback(int status, void *command, void *ctx)
 {
+    int serial_fd = (int)ctx;
+
     if (status == COMMAND_PASS)
     {
         printf("pass command: %s\n", (char *)command);
+        write(serial_fd, command, strlen((char *)command));
     }
 }
 
 void MyCallback::Callback(string command)
 {
     INFO("Received command : %s\n", command.c_str());
-
-    extract_command(command.c_str(), command_callback, NULL); 
+    extract_command(command.c_str(), command_callback, (void *)fd_); 
 }

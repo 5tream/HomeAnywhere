@@ -27,7 +27,13 @@
 class MyCallback : public CallbackFunc {
 
     public:
+        MyCallback(int fd)
+        {
+            fd_ = fd;
+        }
         void Callback(string command);
+    private:
+        int fd_;
 };
 
 #endif
