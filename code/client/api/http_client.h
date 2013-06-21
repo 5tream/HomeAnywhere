@@ -42,6 +42,7 @@ class HttpClient {
             bzero(&servaddr, sizeof(servaddr));
             servaddr.sin_family = AF_INET;
             servaddr.sin_port = htons(port);
+            inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr);
             // Get host
             char host_name[128];
             struct hostent *host_ent;
