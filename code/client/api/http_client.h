@@ -49,7 +49,8 @@ class HttpClient {
             gethostname(host_name, sizeof(host_name));
             host_ent = gethostbyname(host_name);
 
-            host_ = string(inet_ntoa(*(struct in_addr*)(host_ent->h_addr_list[0])));
+            //host_ = string(inet_ntoa(*(struct in_addr*)(host_ent->h_addr_list[0])));
+            host_ = ip;
         }
 
         ~HttpClient() {

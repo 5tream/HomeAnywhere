@@ -1,5 +1,5 @@
 CPP = g++
-CFLAGS = -pthread -g
+CFLAGS = -pthread -g -Wall
 CFLAGS += -D__DEBUG -D__INFO -D__ERROR -D__FATAL
 
 INCS = -I./ -I./http/ -I./http/third_libs/ -I../../server/common/utils/
