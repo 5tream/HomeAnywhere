@@ -12,29 +12,20 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file my_callbackfunc.cc
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-21
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
-#include "post_handler.h"
+#include "my_callbackfunc.h"
+#include <unistd.h>
 
-void RESTServer::Start() {
-   HttpServer http_server;
+void MyCallback::Callback(string command) {
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
-   PostHandler post_handler(post_resources_, POST);
-
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
-   http_server.AddHandler(&post_handler);
-
-   http_server.Listen(port_);
+    INFO("Received command : %s\n", command.c_str());
+    if (command == "No command retrived") {
+        sleep(3);
+    }
 }

@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <assert.h>
 #include <iostream>
+#include <signal.h>
 
 #define BACKLOG 10
 
@@ -86,8 +87,9 @@ void* HttpServer::client_thread_func (void* ptr_this) {
         }
 
         should_keep_alive = response.keep_alive();
+        DEBUG("Keep alive is %d\n", should_keep_alive);
 
-        if (!should_keep_alive) {
+        if (!should_keep_alive || errno == 32) {
             break;
         }
     }
@@ -153,11 +155,15 @@ int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
     ssize_t bytes_received = 0;
 
     if ((bytes_received = recv(client_sockfd, buf, HTTP_MESSAGE_MAX_LEN, 0)) <= 0) {
+        if (errno == 32) {
+            FATAL("Client no longer connected. Clean up\n");
+            return -1;
+        }
         if (bytes_received < 0) {
-            ERROR("No byte to receive\n", bytes_received);
+            FATAL("No byte to receive\n", bytes_received);
             return -1;
         } else {
-            ERROR("Connection has been forcibly closed by remote client.\n");
+            FATAL("Connection has been forcibly closed by remote client.\n");
             return 0;
         }
     }
@@ -168,7 +174,7 @@ int HttpServer::Receive(HttpRequest& request, int client_sockfd) {
     
 
     if (parser.Parse(buf, bytes_received) < 0) {
-        ERROR("Parse http request error.\n");
+        FATAL("Parse http request error.\n");
         return -1;
     }
 
@@ -183,18 +189,27 @@ int HttpServer::Answer(HttpResponse response, int client_sockfd) {
     size_t response_len = response.ToString().length();
     char* buf = new char[response_len];
     memcpy(buf, response.ToString().c_str(), response_len);
+    DEBUG("Sending response\n");
     if ((bytes_sent = send(client_sockfd, buf, response_len, 0)) <= 0) {
+        if (errno == 32) {
+            FATAL("Client no longer connected. Clean up\n");
+            response.set_keep_alive(false);
+            DEBUG("Keep alive is %d\n", response.keep_alive());
+            return -1;
+        }
+        
         if (bytes_sent < 0) {
-            ERROR("Send data error.\n");
+            FATAL("%d:Send data error.\n", errno);
             return -1;
         } else {
-            ERROR("Connection has been forcibly closed by remote client.\n");
+            FATAL("Connection has been forcibly closed by remote client.\n");
             return 0;
         }
     }
     
+    DEBUG("Response sent\n");
     if (bytes_sent != response_len) {
-        ERROR("Send data error.\n");
+        FATAL("Send data error.\n");
         return -1;
     }
 
@@ -209,6 +224,7 @@ void HttpServer::LoopAccepting(int server_sockfd) {
     int client_sockfd;
     struct sockaddr_in client_addr;
     socklen_t client_len;
+    signal(SIGPIPE, SIG_IGN);
 
     for (;;) {
         pthread_t pt;

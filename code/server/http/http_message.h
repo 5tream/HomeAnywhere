@@ -82,7 +82,7 @@ class HttpMessage {
         map<string, string> headers_;
         string version_;
         string body_;
-        bool keep_alive_;
+        bool keep_alive_ = true;
         
 };
 

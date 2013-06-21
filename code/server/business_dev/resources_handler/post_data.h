@@ -12,29 +12,29 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file post_device.h
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-21
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
-#include "post_handler.h"
+#ifndef POST_DATA_H
+#define POST_DATA_H
 
-void RESTServer::Start() {
-   HttpServer http_server;
+#include "i_resource_handler.h"
+#include "Queue.h"
+#include "entities.h"
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
-   PostHandler post_handler(post_resources_, POST);
+class PostData: public IResourceHandler {
 
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
-   http_server.AddHandler(&post_handler);
+    public:
+        PostData(Queue<Devices>* device_queue) {
+            device_queue_ = device_queue;
+        }
+        Result Handle(Params* args, string body);
+    private:
+        Queue<Devices>* device_queue_;
+};
 
-   http_server.Listen(port_);
-}
+#endif

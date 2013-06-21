@@ -26,11 +26,12 @@
 
 HttpResponse HttpClient::Send(HttpRequest request) {
 
-    if (sockfd_ < 0) {
+    if (sockfd_ <= 0) {
         if ((sockfd_ = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
             FATAL("socket");
             exit(0);
         }
+        DEBUG("Connection no longer exists, reconnecting...\n");
         int conn_ret = connect(sockfd_, (struct sockaddr*)&servaddr, sizeof(servaddr));
         if (conn_ret == -1) {
             FATAL("connect");
@@ -38,6 +39,7 @@ HttpResponse HttpClient::Send(HttpRequest request) {
         }
     }
     if (!keep_alive_) {
+        DEBUG("Should not keep alive\n");
         request.AddHeaderItem(HH_CONNECTION, "close");
     }
 
@@ -47,6 +49,7 @@ HttpResponse HttpClient::Send(HttpRequest request) {
     char* buf = new char[request_len];
     memcpy(buf, request.ToString().c_str(), request_len);
 
+    DEBUG();
     if((bytes_sent = send(sockfd_, buf, request_len, 0)) <= 0) {
         if (bytes_sent < 0) {
             FATAL("Send request error.\n");
@@ -70,7 +73,7 @@ HttpResponse HttpClient::Send(HttpRequest request) {
     buf = new char[HTTP_MESSAGE_MAX_LEN];
 
     if ((bytes_received = recv(sockfd_, buf, HTTP_MESSAGE_MAX_LEN, 0)) <= 0) {
-        if (bytes_received < 0) {
+        if (bytes_received == 0) {
             FATAL("No byte to receive\n", bytes_received);
             exit(0);
         } else {

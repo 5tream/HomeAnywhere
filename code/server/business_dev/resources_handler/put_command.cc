@@ -21,7 +21,7 @@
 
 #include "put_command.h"
 
-Result PutCommand::Handle(Params* args) {
+Result PutCommand::Handle(Params* args, string body) {
     Result result;
     string res = "";
 
@@ -29,25 +29,26 @@ Result PutCommand::Handle(Params* args) {
     // Create an command
     Command* comm = new Command();
 
-    DEBUG("FUCKING PUT\n");
     comm->to_did = args->Get(1);
-    DEBUG("FUCKING PUT2\n");
-    comm->command_str = args->Get(2);
-    DEBUG("FUCKING PUT3\n");
+    //comm->command_str = args->Get(2);
+    comm->command_str = body;
 
     Devices all_devs;
     // Get device queue
+    DEBUG("Retriving device queue...\n");
     device_queue_->pop(all_devs);
-    DEBUG("FUCKING PUT4\n");
+    DEBUG("device queue got\n");
     // add command
     if (all_devs[comm->to_did] == NULL) {
 
     }
+    DEBUG("Enqueue command\n");
     all_devs[comm->to_did]->command_queue.push(comm);
-    DEBUG("FUCKING PUT5\n");
+    DEBUG("Command enqueued\n");
     // Save device queue
     device_queue_->push(all_devs);
-    DEBUG("FUCKING PUT6\n");
+    DEBUG("Device queue pushed back\n");
 
     result.set_result("Not found.");
+    return result;
 }

@@ -12,36 +12,33 @@
 * 
 */
 /**
-* @file get_handler.cc
-* @brief Implement HttpRequestHandler to handle GET request
+* @file post_handler.cc
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-21
 */
 
-#include "i_http_request_handler.h"
-#include "i_resource_handler.h"
-#include "http_status.h"
-#include "get_handler.h"
+#include "post_handler.h"
+int PostHandler::Handle(HttpRequest request, HttpResponse& response) {
 
-int GetHandler::Handle(HttpRequest request, HttpResponse& response) {
     string url = request.path();
     Params* params = new Params();
 
+    DEBUG("Post Fuck it!\n");
     IResourceHandler* handler;
 
-    if ((handler = resources_.Find(url, params)) == NULL) {
+    if((handler = resources_.Find(url, params)) == NULL) {
         DEBUG("Resource not found\n");
         response.set_status(NOT_FOUND_404);
         return -1;
     }
+    DEBUG("Post Fuck it2!\n");
 
-    DEBUG("Resource found!, params size %d\n", params->Size());
     Result res = handler->Handle(params, request.body());
     response.set_body(res.result());
     response.set_status(OK_200);
-    DEBUG("Response is %s\n", response.ToString().c_str());
 
+    DEBUG("Post Fuck it3!\n");
     return 0;
 }
-

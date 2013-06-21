@@ -22,7 +22,8 @@
 #include "get_command.h"
 #include "utils_log.h"
 
-Result GetCommand::Handle(Params* args) {
+Result GetCommand::Handle(Params* args, string body) {
+
     Result result;
     string res = "";
     string curr_uid = args->Get(0);
@@ -32,17 +33,42 @@ Result GetCommand::Handle(Params* args) {
     // Prepare an command structure
     Command *comm;
 
-    DEBUG("11111\n");
     Devices all_devs;
     // Get device queue
-    DEBUG("22222\n");
+    DEBUG("Retriving device queue...\n");
     device_queue_->pop(all_devs);
+    DEBUG("device queue got\n");
+    if (all_devs[curr_did] == NULL) {
+        result.set_result("Device Not Found");
+        device_queue_->push(all_devs);
+        return result;
+    }
     // Retrive and Pop command
-    comm = all_devs[curr_did]->command_queue.front();
-    DEBUG("55555\n");
-    all_devs[curr_did]->command_queue.pop();
-    DEBUG("44444\n");
+    DEBUG("Retriving command\n");
+    if (all_devs[curr_did]->command_queue.empty()) {
 
+        result.set_result("No command retrived");
+        device_queue_->push(all_devs);
+        return result;
+    }
+    comm = all_devs[curr_did]->command_queue.front();
+    if (comm == NULL) {
+        result.set_result("No command retrived");
+        device_queue_->push(all_devs);
+        return result;
+    }
+    all_devs[curr_did]->command_queue.pop();
+    DEBUG("Command popped up\n");
     // Save device queue
     device_queue_->push(all_devs);
+    DEBUG("Device queue pushed back\n");
+
+    result.set_result(comm->command_str);
+    if (comm->command_str != "") {
+        DEBUG("Command sent %s\n", comm->command_str.c_str());
+    } else {
+        DEBUG("Empty command string\n");
+        result.set_result("");
+    }
+    return result;
 }
