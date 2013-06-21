@@ -39,7 +39,7 @@ extern "C" {
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
-#define DEBUG(format)
+#define DEBUG(format,...)
 #endif //__DEBUG
 
 #ifdef __INFO
@@ -48,7 +48,7 @@ extern "C" {
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
-#define INFO(format)
+#define INFO(format,...)
 #endif //__INFO
 
 #ifdef __ERROR
@@ -57,7 +57,7 @@ extern "C" {
     printf("%s]\n", __PRETTY_FUNCTION__); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
-#define ERROR(format)
+#define ERROR(format,...)
 #endif //__ERROR
 
 #ifdef __FATAL
@@ -67,7 +67,7 @@ extern "C" {
     printf("%s\n", strerror(errno)); \
     printf(format"\033[0m\n", ##__VA_ARGS__)
 #else
-#define FATAL(format)
+#define FATAL(format,...)
 #endif //__FATAL
 
 #ifdef __cplusplus

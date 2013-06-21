@@ -20,6 +20,7 @@
 */
 
 #include "put_command.h"
+#include <pthread.h>
 
 Result PutCommand::Handle(Params* args, string body) {
     Result result;
@@ -38,14 +39,21 @@ Result PutCommand::Handle(Params* args, string body) {
     DEBUG("Retriving device queue...\n");
     device_queue_->pop(all_devs);
     DEBUG("device queue got\n");
+
+    Device* device = all_devs[comm->to_did];
     // add command
-    if (all_devs[comm->to_did] == NULL) {
+    if (device == NULL) {
         result.set_result("Device does not exist");
         device_queue_->push(all_devs);
         return result;
     }
+
     DEBUG("Enqueue command\n");
+    pthread_mutex_lock(&device->qlock);
     all_devs[comm->to_did]->command_queue.push(comm);
+    pthread_mutex_unlock(&device->qlock);
+    pthread_cond_signal(&device->qready);
+
     DEBUG("Command enqueued\n");
     // Save device queue
     device_queue_->push(all_devs);

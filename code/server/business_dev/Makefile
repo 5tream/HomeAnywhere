@@ -1,6 +1,6 @@
 CPP = g++
 CFLAGS = -pthread -g -std=c++0x
-CFLAGS += -D__DEBUG -D__INFO -D__ERROR -D__FATAL
+CFLAGS += -D__INFO -D__ERROR -D__FATAL
 
 HTTP_PATH = ../http/
 HTTP_CLIENT_PATH =  ../../client/api/

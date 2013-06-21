@@ -43,25 +43,26 @@ Result GetCommand::Handle(Params* args, string body) {
         device_queue_->push(all_devs);
         return result;
     }
+    Device* device = all_devs[curr_did];
     // Retrive and Pop command
     DEBUG("Retriving command\n");
-    if (all_devs[curr_did]->command_queue.empty()) {
 
-        result.set_result("No command retrived");
-        device_queue_->push(all_devs);
-        return result;
-    }
-    comm = all_devs[curr_did]->command_queue.front();
-    if (comm == NULL) {
-        result.set_result("No command retrived");
-        device_queue_->push(all_devs);
-        return result;
-    }
-    all_devs[curr_did]->command_queue.pop();
-    DEBUG("Command popped up\n");
-    // Save device queue
+    pthread_mutex_lock(&device->qlock);
     device_queue_->push(all_devs);
-    DEBUG("Device queue pushed back\n");
+    while (device->command_queue.empty()) {
+        // Put device_queue back so other thread can retrive it
+        DEBUG("Device queue pushed back\n");
+        pthread_cond_wait(&device->qready, &device->qlock);
+    }
+    comm = device->command_queue.front();
+    device->command_queue.pop();
+    pthread_mutex_unlock(&device->qlock);
+    
+    //if (comm == NULL) {
+    //    result.set_result("No command retrived");
+    //    device_queue_->push(all_devs);
+    //    return result;
+    //}
 
     result.set_result(comm->command_str);
     if (comm->command_str != "") {

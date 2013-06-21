@@ -21,6 +21,7 @@
 
 #include "post_device.h"
 #include <ctime>
+#include <pthread.h>
 using namespace std;
 
 Result PostDevice::Handle(Params* args, string data) {
@@ -37,6 +38,8 @@ Result PostDevice::Handle(Params* args, string data) {
     device->id = args->Get(1);
     device->name = "default";
     device->description = "default";
+    device->qready = PTHREAD_COND_INITIALIZER;
+    device->qlock = PTHREAD_MUTEX_INITIALIZER;
 
     DataStream* data_stream = new DataStream();
     data_stream->id = "1";

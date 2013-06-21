@@ -25,6 +25,7 @@
 #include <map>
 #include <string>
 #include <queue>
+#include <pthread.h>
 using namespace std;
 
 typedef struct DataStream {
@@ -59,6 +60,8 @@ typedef struct Device {
     DataStreams data_streams;
     Controls controls;
     queue<Command*> command_queue;
+    pthread_cond_t qready;
+    pthread_mutex_t qlock;
 }Device;
 
 typedef std::map<std::string, Device*> Devices; 
