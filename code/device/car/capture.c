@@ -341,7 +341,7 @@ static void camera_req_buf_and_mmap(CameraDevice *thiz)
     }
 
     /* alloc mmap memory address of device */
-    thiz->req_buf_info = calloc(req.count, sizeof(ReqBufInfo));
+    thiz->req_buf_info = (ReqBufInfo *)calloc(req.count, sizeof(ReqBufInfo));
     if (thiz->req_buf_info == NULL)
     {
         fprintf(stderr, "out of memory\n");
@@ -496,7 +496,7 @@ int camera_init(CameraDevice *thiz,
                 int width,
                 int height,
                 int fps,
-                PixelFormat format)
+                int format)
 {
     int ret = 0;
 

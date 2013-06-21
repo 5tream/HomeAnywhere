@@ -7,6 +7,10 @@
 #ifndef _CAPTURE_H_
 #define _CAPTURE_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum _StreamingState
 {
     STREAMING_OFF,
@@ -51,7 +55,7 @@ int camera_init(CameraDevice *thiz,
                 int width,
                 int height,
                 int fps,
-                PixelFormat format);
+                int format);
 
 /* open camera and query informations of camera device */
 void camera_open_query(CameraDevice *thiz);
@@ -66,5 +70,9 @@ void camera_close(CameraDevice *thiz);
 void camera_read_frame(CameraDevice *thiz, 
                        VideoCallBack video_data_callback,
                        void *ctx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

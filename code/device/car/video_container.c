@@ -19,7 +19,7 @@ int video_container_init(VideoContainer *container,
     container->buf_capacity = buf_capacity; 
 
     container->raw_size = 0;
-    container->raw_buffer = malloc(buf_capacity);
+    container->raw_buffer = (unsigned char *)malloc(buf_capacity);
     if (container->raw_buffer == NULL)
     {
         video_container_destroy(container);
@@ -27,7 +27,7 @@ int video_container_init(VideoContainer *container,
     }
 
     container->processed_size = 0;
-    container->processed_buffer = malloc(buf_capacity);
+    container->processed_buffer = (unsigned char *)malloc(buf_capacity);
     if (container->processed_buffer == NULL)
     {
         video_container_destroy(container);

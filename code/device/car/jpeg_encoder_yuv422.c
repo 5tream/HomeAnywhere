@@ -11,6 +11,8 @@
 #include <jpeglib.h>
 #include <jerror.h>
 
+#include "jpeg_encoder.h"
+
 int jpeg_encoder_yuv422(unsigned char *out_buf, 
                         unsigned char *in_buf, 
                         int in_size,
@@ -45,7 +47,7 @@ int jpeg_encoder_yuv422(unsigned char *out_buf,
     (void)jpeg_start_compress(&cinfo, TRUE);
 
     /* step 5: scan lines of input buffer and compress lines with writing compressed data to data source which is set at step 2 */
-    rgb_line_buffer = calloc(width * 3, 1);
+    rgb_line_buffer = (unsigned char *)calloc(width * 3, 1);
     z = 0;
     while (cinfo.next_scanline < height)
     {

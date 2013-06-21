@@ -13,6 +13,8 @@
 #include "capture.h"
 #include "video_container.h"
 #include "jpeg_encoder.h"
+#include "device_api.h"
+#include "my_callbackfunc.h"
 
 /************************************************************
  * Macro Definitions
@@ -90,15 +92,7 @@ static void requestdb_callback(unsigned char *buf, int buf_size, void *ctx)
 
 static void frame_callback(void *ctx, void *buf_start, int buf_size)
 {
-    video_container_input_raw(&container, buf_start, buf_size);
-}
-
-static void command_callback(int status, void *command, void *ctx)
-{
-    if (status == COMMAND_PASS)
-    {
-        printf("pass command: %s\n", (char *)command);
-    }
+    video_container_input_raw(&container, (unsigned char *)buf_start, buf_size);
 }
 
 static void send_thread_cleanup(void *arg)
@@ -164,18 +158,18 @@ int main(int argc, char **argv)
     int socket_fd;
     struct sockaddr_in serv_addr;
 
-    if (argc != 6)
+    if (argc != 7)
     {
-        fprintf(stderr, "Usage: %s addr port camera_name camera_format output_format\n", argv[0]);
+        fprintf(stderr, "Usage: %s addr video_port http_port camera_name camera_format output_format\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
     /* check input camera format argument */
-    if (strcmp(argv[4], "yuyv") == 0)
+    if (strcmp(argv[5], "yuyv") == 0)
     {
         in_format = PIX_FMT_YUYV;
     }
-    else if (strcmp(argv[4], "mjpeg") == 0)
+    else if (strcmp(argv[5], "mjpeg") == 0)
     {
         in_format = PIX_FMT_MJPEG;
     }
@@ -186,11 +180,11 @@ int main(int argc, char **argv)
     }
 
     /* check output video format argument */
-    if (strcmp(argv[5], "raw") == 0)
+    if (strcmp(argv[6], "raw") == 0)
     {
         out_format = OUT_FMT_RAW;
     }
-    else if (strcmp(argv[5], "jpeg") == 0)
+    else if (strcmp(argv[6], "jpeg") == 0)
     {
         out_format = OUT_FMT_JPEG;
     }
@@ -204,7 +198,7 @@ int main(int argc, char **argv)
     video_container_init(&container,  CAM_WIDTH * CAM_HEIGHT * 2);
 
     /* camera device init */
-    camera_init(&camera, argv[3], CAM_WIDTH, CAM_HEIGHT, CAM_FPS, in_format);
+    camera_init(&camera, argv[4], CAM_WIDTH, CAM_HEIGHT, CAM_FPS, in_format);
     camera_open_set(&camera);
     pthread_create(&camera_tid, NULL, camera_thread, (void *)out_format);
 
@@ -228,30 +222,42 @@ int main(int argc, char **argv)
 
     pthread_create(&send_tid, NULL, send_thread, (void *)socket_fd);
 
+    string ip = string(argv[1]);
+    int port = atoi(argv[3]);
+    DeviceAPI dev_api(ip, port);
+
+    Device device;
+    device.id = "1";
+    device.owner_id = "1";
+
+    dev_api.Init(device);
+    MyCallback mycallback;
+    dev_api.RegisterCallback(&mycallback);
+
     /* command parsing module */
     for (;;)
     {
-        if ((recv_size = recv(socket_fd, command_buf, BUF_SIZE, 0)) <= 0)
-        {
-            if (recv_size == 0)
-            {
-                printf("client exit\n");
+        //if ((recv_size = recv(socket_fd, command_buf, BUF_SIZE, 0)) <= 0)
+        //{
+        //    if (recv_size == 0)
+        //    {
+        //        printf("client exit\n");
 
-                pthread_cancel(send_tid);
+        //        pthread_cancel(send_tid);
 
-                break;
-            }
-            else
-            {
-                perror("recv failed");
-                exit(EXIT_FAILURE);
-            }
-        }
-        command_buf[recv_size] = '\0';
+        //        break;
+        //    }
+        //    else
+        //    {
+        //        perror("recv failed");
+        //        exit(EXIT_FAILURE);
+        //    }
+        //}
+        //command_buf[recv_size] = '\0';
 
-        printf("command(length = %d): %s\n", recv_size, command_buf);
+        //printf("command(length = %d): %s\n", recv_size, command_buf);
 
-        extract_command(command_buf, command_callback, NULL); 
+        //extract_command(command_buf, command_callback, NULL); 
     }
 
     pthread_cancel(camera_tid);
