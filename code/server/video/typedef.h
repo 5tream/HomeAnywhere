@@ -15,6 +15,9 @@
 #define DECLS_END
 #endif
 
+#define BACKLOG         10
+#define CONTAINER_SIZE  320 * 240 * 2
+
 typedef int (*CtxCompareFunc)(void *ctx1, void *ctx2);
 typedef void (*DataRequestFunc)(unsigned char *buf, int buf_size, void *ctx);
 typedef int (*FrameProcessFunc)(unsigned char *out_buf,

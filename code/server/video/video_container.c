@@ -64,7 +64,10 @@ void video_container_requestdb(VideoContainer *thiz,
     pthread_mutex_lock(&thiz->db);
     pthread_cond_wait(&thiz->db_update, &thiz->db);
 
-    requestdb_callback(thiz->processed_buffer, thiz->processed_size, ctx);
+    if (thiz->processed_buffer != NULL)
+    {
+        requestdb_callback(thiz->processed_buffer, thiz->processed_size, ctx);
+    }
 
     pthread_mutex_unlock(&thiz->db);
 }
@@ -84,7 +87,9 @@ void video_container_destroy(VideoContainer *thiz)
     }
     thiz->processed_buffer = NULL;
 
+    pthread_cond_broadcast(&thiz->db_update);
     pthread_cond_destroy(&thiz->db_update);
+    pthread_mutex_unlock(&thiz->db);
     pthread_mutex_destroy(&thiz->db);
 
     free(thiz);

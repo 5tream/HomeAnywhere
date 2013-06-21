@@ -22,9 +22,6 @@
 #include "video_stream.h"
 #include "video_container.h"
 
-#define BACKLOG         10
-#define CONTAINER_SIZE  320 * 240 * 2
-
 struct _VideoServer
 {
     int port;
@@ -112,11 +109,19 @@ void video_server_run(VideoServer *thiz)
     socklen_t disp_addr_len;
     socklen_t client_addr_len;
     int connect_socket;
+    int reuse;
 
     thiz->listen_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (thiz->listen_socket == -1)
     {
         perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    reuse = 1;
+    if (setsockopt(thiz->listen_socket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int)) == -1)
+    {
+        perror("setsockopt failed");
         exit(EXIT_FAILURE);
     }
 
@@ -144,7 +149,7 @@ void video_server_run(VideoServer *thiz)
     }
     char disp_addr_str[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &disp_addr.sin_addr, disp_addr_str, INET_ADDRSTRLEN);
-    printf("server is listening at %s:%d\n", disp_addr_str, ntohs(disp_addr.sin_port));
+    printf("video server is listening at %s:%d\n", disp_addr_str, ntohs(disp_addr.sin_port));
 
     int index;
     for (;;)
@@ -163,7 +168,7 @@ void video_server_run(VideoServer *thiz)
             }
         }
         inet_ntop(AF_INET, &client_addr.sin_addr, disp_addr_str, INET_ADDRSTRLEN);
-        printf("client(%s) is connected\n", disp_addr_str);
+        printf("device(%s) is connected\n", disp_addr_str);
         
         index = video_server_find_avail_index(thiz);
         if (index != -1)
@@ -216,10 +221,15 @@ int video_server_get_id_by_ctx(VideoServer *thiz, CtxCompareFunc compare, void *
     return i;
 }
 
-void video_server_req_stream(VideoServer *thiz, int stream_id, DataRequestFunc request, void *ctx)
+int video_server_req_stream(VideoServer *thiz, int stream_id, DataRequestFunc request, void *ctx)
 {
-    assert(stream_id >= 0 && stream_id <= thiz->stream_cur_max);
+    if (stream_id < 0 || stream_id > thiz->stream_cur_max || thiz->stream_list[stream_id] == NULL)
+    {
+        return -1;
+    }
 
     video_container_requestdb(thiz->stream_list[stream_id]->container, request, ctx); 
+
+    return 0;
 }
 

@@ -23,7 +23,7 @@ static int frame_process(unsigned char *out_buf,
                          int out_format)
 {
     memcpy(out_buf, in_buf, in_size);
-    return 0;
+    return in_size;
 }
 
 static void stream_thread_cleanup(void *arg)
@@ -34,8 +34,6 @@ static void stream_thread_cleanup(void *arg)
     {
         DEBUG("stream %d thread destroy\n", stream->id);
 
-        stream->id = 10;
-        stream->socket = 20;
         video_container_destroy(stream->container);
         free(stream);
         *(Stream **)arg = NULL;
@@ -67,11 +65,11 @@ void *video_stream_thread(void *user_data)
         /* 1. receive stream context */
         recv(stream->socket, (void *)&ctx, sizeof(int), 0);
         stream->ctx = (void *)ctx;
-        DEBUG("stream %d receive stream context %d\n", stream->id, ctx);
+        //DEBUG("stream %d receive stream context %d\n", stream->id, ctx);
 
         /* 2. receive frame size */
         recv(stream->socket, (void *)&in_size, sizeof(int), 0);
-        DEBUG("stream %d receive frame size %d\n", stream->id, in_size);
+        //DEBUG("stream %d receive frame size %d\n", stream->id, in_size);
         if (in_size < 0)
         {
             continue;
@@ -103,7 +101,7 @@ void *video_stream_thread(void *user_data)
             pos += recv_size;
         }
 
-        DEBUG("stream %d receive frame finished\n", stream->id);
+        //DEBUG("stream %d receive frame finished\n", stream->id);
 
         /* update container's content */
         video_container_updatedb(stream->container,

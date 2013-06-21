@@ -9,7 +9,8 @@ TARGET = video_server
 OBJS = main.o\
 	   video_server.o\
 	   video_stream.o\
-	   video_container.o
+	   video_container.o\
+	   client_service.o
 
 TEST_DIR = test/
 TEST_TARGET = video_server_test

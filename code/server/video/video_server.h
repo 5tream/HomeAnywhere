@@ -19,7 +19,7 @@ void video_server_destroy(VideoServer *thiz);
 void video_server_run(VideoServer *thiz);
 void video_server_stop(VideoServer *thiz);
 int video_server_get_id_by_ctx(VideoServer *thiz, CtxCompareFunc compare, void *ctx);
-void video_server_req_stream(VideoServer *thiz, int stream_id, DataRequestFunc request, void *ctx);
+int video_server_req_stream(VideoServer *thiz, int stream_id, DataRequestFunc request, void *ctx);
 
 DECLS_END
 
