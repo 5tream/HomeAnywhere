@@ -38,7 +38,7 @@ int PutHandler::Handle(HttpRequest request, HttpResponse& response) {
     }
     DEBUG("Fuck it2!\n");
 
-    Result res = handler->Handle(params);
+    Result res = handler->Handle(params, request.body());
     response.set_body(res.result());
     response.set_status(OK_200);
 

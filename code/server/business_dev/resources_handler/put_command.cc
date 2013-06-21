@@ -21,7 +21,7 @@
 
 #include "put_command.h"
 
-Result PutCommand::Handle(Params* args) {
+Result PutCommand::Handle(Params* args, string body) {
     Result result;
     string res = "";
 
@@ -50,4 +50,5 @@ Result PutCommand::Handle(Params* args) {
     DEBUG("FUCKING PUT6\n");
 
     result.set_result("Not found.");
+    return result;
 }

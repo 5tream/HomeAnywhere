@@ -31,7 +31,7 @@ class GetCommand: public IResourceHandler {
         GetCommand(Queue<Devices>* device_queue) {
             device_queue_ = device_queue;
         }
-        Result Handle(Params* args);
+        Result Handle(Params* args, string body);
     private:
         Queue<Devices>* device_queue_;
 };

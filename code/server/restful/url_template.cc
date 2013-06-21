@@ -38,6 +38,7 @@ UrlTemplate::UrlTemplate(string url_str) {
 
 bool UrlTemplate::Match(string url_to_match, Params* params) {
 
+    DEBUG("in:%s, template:%s\n", url_to_match.c_str(), url_str_.c_str());
     vector<string> to_match_list = Split(url_to_match, '/');
     return Match(to_match_list, params);
 }
@@ -47,6 +48,11 @@ bool UrlTemplate::Match(vector<string> to_match_list, Params* params) {
     if (to_match_list.size() <= 0 || url_list_.size() <= 0) {
         ERROR("url is empty, match error!");
         return false;
+    }
+    if (to_match_list.size() != url_list_.size()) {
+        ERROR("url's items number %d:%d doesn't match\n", to_match_list.size(), url_list_.size());
+        return false;
+
     }
 
     vector<string>::iterator it_m = url_list_.begin();
@@ -61,7 +67,7 @@ bool UrlTemplate::Match(vector<string> to_match_list, Params* params) {
 
         string tmp_m = *it_m;
         string tmp_s = *it_s;
-        //DEBUG("matching %s and %s\n", tmp_m.c_str(), tmp_s.c_str());
+        DEBUG("matching %s and %s\n", tmp_m.c_str(), tmp_s.c_str());
         if ((tmp_m.at(0) == '{') && (tmp_m.at(tmp_m.length() - 1) == '}')) {
             int index = atoi(tmp_m.substr(1, tmp_m.length() - 2).c_str());
             pars[index] = tmp_s;

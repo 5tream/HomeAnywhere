@@ -12,29 +12,22 @@
 * 
 */
 /**
-* @file rest_server.cc
-* @brief A rest_server implemented with http_server
+* @file MyCallbackFunc.h
+* @brief 
 * @author Rye Yao
 * @version 0.1
-* @date 2013-06-18
+* @date 2013-06-21
 */
 
-#include "rest_server.h"
-#include "http_server.h"
-#include "get_handler.h"
-#include "put_handler.h"
-#include "post_handler.h"
+#ifndef MYCALLBACKFUNC_H
+#define MYCALLBACKFUNC_H
 
-void RESTServer::Start() {
-   HttpServer http_server;
+#include "device_api.h"
 
-   GetHandler get_handler(get_resources_, GET);
-   PutHandler put_handler(put_resources_, PUT);
-   PostHandler post_handler(post_resources_, POST);
+class MyCallback : public CallbackFunc {
 
-   http_server.AddHandler(&get_handler);
-   http_server.AddHandler(&put_handler);
-   http_server.AddHandler(&post_handler);
+    public:
+        void Callback(string command);
+};
 
-   http_server.Listen(port_);
-}
+#endif

@@ -22,7 +22,7 @@
 #include "get_command.h"
 #include "utils_log.h"
 
-Result GetCommand::Handle(Params* args) {
+Result GetCommand::Handle(Params* args, string body) {
     Result result;
     string res = "";
     string curr_uid = args->Get(0);
@@ -42,7 +42,9 @@ Result GetCommand::Handle(Params* args) {
     DEBUG("55555\n");
     all_devs[curr_did]->command_queue.pop();
     DEBUG("44444\n");
-
     // Save device queue
     device_queue_->push(all_devs);
+
+    result.set_result(comm);
+    return result;
 }
