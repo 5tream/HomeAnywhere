@@ -40,7 +40,9 @@ Result PutCommand::Handle(Params* args, string body) {
     DEBUG("device queue got\n");
     // add command
     if (all_devs[comm->to_did] == NULL) {
-
+        result.set_result("Device does not exist");
+        device_queue_->push(all_devs);
+        return result;
     }
     DEBUG("Enqueue command\n");
     all_devs[comm->to_did]->command_queue.push(comm);

@@ -40,6 +40,11 @@ class HttpMessage {
 
     public:
 
+        HttpMessage() {
+
+            version_ = HH_HTTP_1_1;
+            keep_alive_ = true;
+        }
         void AddHeaderItem(string name, string value) { headers_[name] = value; }
         string GetHeaderItem(string name) { return headers_[name]; }
 
@@ -82,8 +87,7 @@ class HttpMessage {
         map<string, string> headers_;
         string version_;
         string body_;
-        bool keep_alive_ = true;
-        
+        bool keep_alive_;
 };
 
 #endif

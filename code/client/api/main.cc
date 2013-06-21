@@ -29,6 +29,8 @@
 #include <stdio.h>
 
 #include "http_response.h"
+#include <iostream>
+using namespace std;
 
 int main(int argc, char** argv) {
 
@@ -43,28 +45,25 @@ int main(int argc, char** argv) {
         INFO("Usage: httpserver <ip> <port> <GET|PUT|DELETE|POST> <path> [data]\n");
         exit(1);
     }
-    DEBUG("00000\n");
 
     string ip = string(argv[1]);
-    DEBUG("12321\n");
     port = atoi(argv[2]);
-    DEBUG("121212\n");
     string method = string(argv[3]);
-    DEBUG("232323\n");
     string path = string(argv[4]);
-    DEBUG("424343\n");
     string data = "";
     if (argc == 6) {
         data = string(argv[5]);
     }
-    DEBUG("11111\n");
 
     HttpClient hc(ip, port);
     HttpResponse response;
     string content_type = "text";
     if (method == "GET") {
-        DEBUG("GET\n");
-        response = hc.Get(path);
+        //DEBUG("GET\n");
+        while (true) {
+            response = hc.Get(path);
+            cout<<response.ToString()<<endl;
+        }
     } else if (method == "PUT") {
         DEBUG("PUT\n");
         response = hc.Put(path, content_type, data);

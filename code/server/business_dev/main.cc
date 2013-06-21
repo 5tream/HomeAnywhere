@@ -30,6 +30,7 @@
 #include "get_command.h"
 #include "post_device.h"
 #include "post_data.h"
+#include "get_data.h"
 #include "rest_server.h"
 
 int main(int argc, char** argv) {
@@ -52,6 +53,8 @@ int main(int argc, char** argv) {
     Resource *get_command_res = new Resource(GET, "/users/{0}/devices/{1}/command");
     Resource *post_device_res = new Resource(POST, "/users/{0}/devices/{1}");
     Resource *post_data_res = new Resource(POST, "/users/{0}/devices/{1}/datastream/{2}");
+    Resource *get_data_res = new Resource(GET, "/users/{0}/devices/{1}/datastream/{2}");
+
     
     // Set resource handler
     PutCommand *pc = new PutCommand(&device_queue);
@@ -66,12 +69,15 @@ int main(int argc, char** argv) {
     PostData *pda = new PostData(&device_queue);
     post_data_res->set_resource_handler(pda);
 
+    GetData *gda = new GetData(&device_queue);
+    get_data_res->set_resource_handler(gda);
     // Add resource to REST server
     RESTServer rest_server(port);
     rest_server.AddResource(put_command_res);
     rest_server.AddResource(get_command_res);
     rest_server.AddResource(post_device_res);
     rest_server.AddResource(post_data_res);
+    rest_server.AddResource(get_data_res);
 
     // Start REST server
     rest_server.Start();
