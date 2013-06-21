@@ -1,0 +1,40 @@
+sqlite3 homeanywhere
+
+若出现以下提示：SQLite header and source version mismatch
+则需要：
+rm /usr/lib/i386-linux-gnu/libsqlite3*
+cp /usr/local/lib/libsqlite3* /usr/lib/i386-linux-gnu/
+
+libsqlite3.a libsqlite3.la libsqlite3.so libsqlite3.so.0 libsqlite3.so.0.8.6
+我是把/usr/lib/i386-linux-gnu下的删掉
+然后从/usr/local/lib把新的cp过来
+
+
+创建表结构：
+create table user
+(
+uid int primary key , 
+uname varchar(20),
+passwd varchar(20)
+);
+
+create table device
+(
+did int primary key,
+uid integer REFERENCES user(uid),
+status varchar(20)
+);
+
+插入数据：
+insert.c
+
+INSERT INTO "user" VALUES( 1 , 'zhangliang', 'passwd' );
+INSERT INTO "user" VALUES( 2 , 'liming', '123456' );
+INSERT INTO "user" VALUES( 3 , 'baixiao', 'qqqqqq' );
+INSERT INTO "user" VALUES( 4 , 'bob', '0000000000000000' );
+
+INSERT INTO "device" VALUES( 1, 3 , 'ok',  );
+INSERT INTO "device" VALUES( 3, 4 , 'no',  );
+
+查询数据：
+select.c
