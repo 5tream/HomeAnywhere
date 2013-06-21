@@ -52,7 +52,7 @@ class HttpClient {
         }
 
         ~HttpClient() {
-            if(sockfd_ < 0) {
+            if(sockfd_ <= 0) {
                 close(sockfd_);
             }
         }

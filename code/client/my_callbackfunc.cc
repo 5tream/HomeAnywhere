@@ -20,8 +20,12 @@
 */
 
 #include "my_callbackfunc.h"
+#include <unistd.h>
 
 void MyCallback::Callback(string command) {
 
     INFO("Received command : %s\n", command.c_str());
+    if (command == "No command retrived") {
+        sleep(3);
+    }
 }

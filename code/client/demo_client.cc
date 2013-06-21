@@ -21,6 +21,7 @@
 
 #include "device_api.h"
 #include "my_callbackfunc.h"
+#include <unistd.h>
 
 int main (int argc, char** argv) {
     
@@ -44,6 +45,7 @@ int main (int argc, char** argv) {
     // Loop Posting data
     while (true) {
         dev_api.PostData("1", "jpeg", "fdafasdfdsa"); 
+        sleep(5);
     }
 
 }

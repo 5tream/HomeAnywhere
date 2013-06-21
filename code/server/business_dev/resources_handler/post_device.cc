@@ -57,10 +57,13 @@ Result PostDevice::Handle(Params* args, string data) {
 
     Devices all_devs;
     // Get device queue
+    DEBUG("Retriving device queue...\n");
     device_queue_->pop(all_devs);
+    DEBUG("device queue got\n");
     // add device
     all_devs[device->id] = device;
     device_queue_->push(all_devs);
+    DEBUG("Device queue pushed back\n");
 
     result.set_result("Device Posted.");
     return result;

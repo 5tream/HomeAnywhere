@@ -39,7 +39,7 @@ void* callback(void * arg) {
 void DeviceAPI::RegisterCallback(CallbackFunc* callback_func) {
 
     callback_func_ = callback_func;
-    callback_func_->http_client = http_client_;
+    callback_func_->http_client = new HttpClient(ip_, port_);
     callback_func_->device = &device_;
 
     pthread_t pt;
@@ -52,6 +52,10 @@ void DeviceAPI::RegisterCallback(CallbackFunc* callback_func) {
 void DeviceAPI::Init(Device device) {
     device_ = device;
     http_client_ = new HttpClient(ip_, port_);
+    // Send device info
+    HttpResponse response;
+    response = http_client_->Post("/users/1/devices/1", "text", "nothing");
+    DEBUG("Posting device returned data: %s\n", response.body().c_str());
 
 }
 
@@ -60,6 +64,7 @@ void DeviceAPI::PostData(string id, string type, string data) {
     // TODO add data resource
     string path = "/users/" + device_.owner_id + "/devices/" + device_.id + "/datastream/" + id;
 
+    DEBUG("Posting data...\n");
     response = http_client_->Post(path, type, data);
     INFO("Response received:\n%s\n", response.ToString().c_str());
 }

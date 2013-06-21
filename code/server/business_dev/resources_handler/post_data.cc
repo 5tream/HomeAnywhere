@@ -35,11 +35,14 @@ Result PostData::Handle(Params* args, string body) {
     // Get device from queue
     Devices all_devs;
     // Get device queue
+    DEBUG("Retriving device queue...\n");
     device_queue_->pop(all_devs);
+    DEBUG("device queue got\n");
     // Retrive device
     Device* device = all_devs[did];
     if (device == NULL) {
         result.set_result("Device Not found");
+        device_queue_->push(all_devs);
         return result;
     }
 
@@ -49,13 +52,16 @@ Result PostData::Handle(Params* args, string body) {
     DataStream* data_stream = device->data_streams[dsid];
     if (data_stream == NULL) {
         result.set_result("Device does not contains this datastream");
+        device_queue_->push(all_devs);
         return result;
     }
     // TODO Push data for different type
 
+    DEBUG("Pushing data\n");
     //device->data_streams[data_stream->id] = data_stream;
     // Put it into queue
     device_queue_->push(all_devs);
+    DEBUG("Device queue pushed back\n");
 
     result.set_result("Data Posted.");
     return result;
